@@ -1,0 +1,14 @@
+{
+    "name": "vatri/google-drive-bundle",
+    "description": "Google Drive API Bundle",
+    "require": {
+        "google/apiclient": "^2.2"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Boris Trivic",
+            "email": "boris.trivic@yandex.ru"
+        }
+    ]
+}

@@ -1,0 +1,8 @@
+parameters:
+  vatri_google_drive.credentials_file: '%kernel.project_dir%/%env(VATRI_DRIVE_CREDENTIALS_FILE)%'
+  vatri_google_drive.redirect_after_login_url: /admin
+  vatri_google_drive.session_access_token_key: vatri_google_drive.access_token
+  vatri_google_drive.session.key.redirect_path_after_auth: vatri_google_drive.session_redirect_path_after_auth
+services:
+  App\Vatri\GoogleDriveBundle\Service\DriveApiService:
+    arguments: [ '@session', '@parameters' ]
