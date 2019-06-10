@@ -1,16 +1,18 @@
 # Google-Drive-Bundle
+
 Google Drive API Bundle for Symfony 4
 
 # Features
 
-- Authorize user via Google API
-- Create a folder (recursively)
-- Check if a folder exists
-- Delete a file
-- List files
-- Copy a file to specific directory
-- Upload a file
-- Add "starred" flag to a file/folder
+- Authorize via Google API
+- Manage Google Drive files and folders
+  - Create a folder (recursively)
+  - Check if a folder exists
+  - Delete a file
+  - List files
+  - Copy a file to specific directory
+  - Upload a file
+  - Add "starred" flag to a file/folder
 
 Installation
 ============
@@ -58,13 +60,13 @@ return [
 
 ### Download and configure JSON credentials file
 
-Download your JSON credentials file from Google Console to _/config_ folder within Symfony and add a variable to _.env_ file:
+Download your JSON credentials file from Google Console to _/config_ folder within Symfony project.
+
+Add following variable to _.env_ file:
 
   `VATRI_DRIVE_CREDENTIALS_FILE=config/google-drive-api-client_secrets.json-example.json`
 
-### Use service in your controller or another Symfony part:
-
-controller method:
+### Use DriveApiService in your controller or another Symfony part like this:
 
 ```
    use App\Vatri\GoogleDriveBundle\Service\DriveApiService;
@@ -81,7 +83,7 @@ controller method:
    }
 ```
 
-### Use authentication controller route
+### Use authentication controller route to authorize users
 
 Add following code to /config/routes.yaml:
 
@@ -92,13 +94,13 @@ controllers:
     type:     annotation
 ```
 
-Now you should have a new route:
+Now you should have a new route like this:
 
 ```
 vatri_google_drive_auth       ANY      ANY      ANY    <href=>/vatri_google_drive/auth
 ```
 
-Now in order to authenticate user, you need to add link to the route like this:
+Now in order to authenticate users, you need to add link to the route like this:
 
 ```
 <a href="{{ path('vatri_google_drive_auth') }}">
@@ -106,9 +108,9 @@ Now in order to authenticate user, you need to add link to the route like this:
 </a>
 ```
 
-### Check if Drive API access token is expired and authorize:
+### Check if Drive API access token is expired and authorize if required:
 
-In your controller add following code:
+Add the following code to your controller or other part:
 
 ```
 if($driveApiService->isTokenExpired()){
@@ -127,8 +129,8 @@ if($driveApiService->isTokenExpired()){
 
 ### Version 0.2
 
-- [ ] Automatically refresh using refresh_token
-- [ ] Automatically create auth route after installation
-- [ ] Automatically add VATRI_DRIVE_CREDENTIALS_FILE= to .evn on installation
-- [ ] Parameter vatri_google_drive.redirect_after_login_url to .env variable (auto add to .env as well)
-- [ ] Uniformed responses from DriveService
+- [ ] Automatically refresh access_token using refresh_token
+- [ ] Automatically create the auth route on installation
+- [ ] Automatically add VATRI_DRIVE_CREDENTIALS_FILE= to _.env_ on installation
+- [ ] Parameter _vatri_google_drive.redirect_after_login_url_ to _.env_ variable (auto add to _.env_ as well)
+- [ ] Uniformed responses from _DriveApiService_
