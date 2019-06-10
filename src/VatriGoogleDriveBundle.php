@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Vatri\GoogleDriveBundle;
+namespace Vatri\GoogleDriveBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
