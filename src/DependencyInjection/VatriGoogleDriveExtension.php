@@ -24,5 +24,6 @@ class VatriGoogleDriveExtension extends Extension
     	);
 
     	$loader->load('services.yaml');
+    	$loader->load('routes.yaml');
     }
 }
