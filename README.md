@@ -80,3 +80,28 @@ controller method:
      dd($res);
    }
 ```
+
+### Use authentication controller route
+
+Add following code to /config/routes.yaml:
+
+```
+controllers:
+    ...
+    resource: '@VatriGoogleDriveBundle/Controller/'
+    type:     annotation
+```
+
+Now you should have a new route:
+
+```
+vatri_google_drive_auth       ANY      ANY      ANY    <href=>/vatri_google_drive/auth
+```
+
+Now in order to authenticate user, you need to add link to the route like this:
+
+```
+<a href="{{ path('vatri_google_drive_auth') }}">
+    Login
+</a>
+```

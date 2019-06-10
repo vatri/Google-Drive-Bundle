@@ -39,24 +39,7 @@ class VatriGoogleDriveAuthController extends AbstractController
      */
     public function index()
     {
-// var_dump($this->access_token_key);
-// dump($this->session->get($this->access_token_key) );
-// die;
-
-		return $this->redirectToRoute("vatri_google_drive_callback");
-		// if ($this->session->get($this->access_token_key) ) {
-		// 	// redirect to home
-		// 	return $this->redirect($this->parameterBag->get('vatri_google_drive.redirect_after_login_url'));
-		// } else {
-		// 	return $this->redirectToRoute("vatri_google_drive_callback");
-		// }
-
-    }
-    /**
-     * @Route("vatri_google_drive/callback", name="vatri_google_drive_callback")
-     */
-    public function callback()
-    {
+		
     	$client = new \Google_Client();
     	try{
 			$client->setAuthConfigFile($this->parameterBag->get('vatri_google_drive.credentials_file'));

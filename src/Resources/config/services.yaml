@@ -4,5 +4,12 @@ parameters:
   vatri_google_drive.session_access_token_key: vatri_google_drive.access_token
   vatri_google_drive.session.key.redirect_path_after_auth: vatri_google_drive.session_redirect_path_after_auth
 services:
+
   Vatri\GoogleDriveBundle\Service\DriveApiService:
     arguments: [ '@session', '@parameter_bag' ]
+
+  Vatri\GoogleDriveBundle\Controller\VatriGoogleDriveAuthController:
+    public: true
+    arguments:
+      $parameterBag: '@parameter_bag'
+      $session: '@session'
