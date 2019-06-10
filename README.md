@@ -12,19 +12,57 @@ Google Drive API Bundle for Symfony 4
 - Upload a file
 - Add "starred" flag to a file/folder
 
-# Install
+Installation
+============
 
-## Step 1: Download the Bundle
+Applications that use Symfony Flex
+----------------------------------
 
-`composer require vatri/google-drive-bundle`
+Open a command console, enter your project directory and execute:
 
-## Step 2: Download and configure credentials file
+```console
+$ composer require vatri/google-drive-bundle
+```
+
+Applications that don't use Symfony Flex
+----------------------------------------
+
+### Step 1: Download the Bundle
+
+Open a command console, enter your project directory and execute the
+following command to download the latest stable version of this bundle:
+
+```console
+$ composer require vatri/google-drive-bundle
+```
+
+This command requires you to have Composer installed globally, as explained
+in the [installation chapter](https://getcomposer.org/doc/00-intro.md)
+of the Composer documentation.
+
+### Step 2: Enable the Bundle
+
+Then, enable the bundle by adding it to the list of registered bundles
+in the `config/bundles.php` file of your project:
+
+```php
+// config/bundles.php
+
+return [
+    // ...
+    App\Vatri\GoogleDriveBundle\VatriGoogleDriveBundle::class => ['dev' => true, 'test' => true],
+];
+```
+
+# Usage
+
+### Download and configure JSON credentials file
 
 Download your JSON credentials file from Google Console to _/config_ folder within Symfony and add a variable to _.env_ file:
 
   `VATRI_DRIVE_CREDENTIALS_FILE=config/google-drive-api-client_secrets.json-example.json`
 
-## Step 3: Use service in your controller or another Symfony part:
+### Use service in your controller or another Symfony part:
 
 controller method:
 
