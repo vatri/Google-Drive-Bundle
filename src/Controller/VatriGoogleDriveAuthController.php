@@ -47,7 +47,7 @@ class VatriGoogleDriveAuthController extends AbstractController
 			return new \Symfony\Component\HttpFoundation\Response('ERROR: ' . $e->getMessage() . '. Please download credentials file from Google Console to '.$this->parameterBag->get('vatri_google_drive.credentials_file'));
 		}
 		
-		$client->setRedirectUri($this->generateUrl('vatri_google_drive_callback',array(), \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL));
+		$client->setRedirectUri($this->generateUrl('vatri_google_drive_auth',array(), \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL));
 		$client->addScope(\Google_Service_Drive::DRIVE);
 
 		// This will generate refresh_token on initial ALLOW permissions
