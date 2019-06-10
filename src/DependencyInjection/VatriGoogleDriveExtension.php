@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Vatri\GoogleDriveBundle\DependencyInjection;
+namespace Vatri\GoogleDriveBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;

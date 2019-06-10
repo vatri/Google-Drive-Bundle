@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Vatri\GoogleDriveBundle\Controller;
+namespace Vatri\GoogleDriveBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;

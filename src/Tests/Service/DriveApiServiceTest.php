@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Vatri\GoogleDriveBundle\Tests\Service;
+namespace Vatri\GoogleDriveBundle\Tests\Service;
 
 use Google_Service_Drive;
 use Google_Service_Drive_FileList;
@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-use App\Vatri\GoogleDriveBundle\Service\DriveApiService;
+use Vatri\GoogleDriveBundle\Service\DriveApiService;
 
 class DriveApiServiceTest extends TestCase
 {

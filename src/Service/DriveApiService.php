@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Vatri\GoogleDriveBundle\Service;
+namespace Vatri\GoogleDriveBundle\Service;
 
 use function dd;
 use Google_Service_Drive_DriveFile;

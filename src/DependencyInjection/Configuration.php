@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Vatri\GoogleDriveBundle\DependencyInjection;
+namespace Vatri\GoogleDriveBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
