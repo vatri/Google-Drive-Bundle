@@ -6,3 +6,8 @@
 # [v0.0.3]
 
 - Fixed missing namespace
+
+
+# [v0.0.4]
+
+- Fixed DriveApiService argument: parameters > parameter_bag
