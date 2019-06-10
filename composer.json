@@ -1,5 +1,6 @@
 {
     "name": "vatri/google-drive-bundle",
+    "type": "symfony-bundle",
     "description": "Google Drive API Bundle",
     "require": {
         "google/apiclient": "^2.2"
