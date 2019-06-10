@@ -62,7 +62,7 @@ Download your JSON credentials file from Google Console to _/config_ folder with
 
   `VATRI_DRIVE_CREDENTIALS_FILE=config/google-drive-api-client_secrets.json-example.json`
 
-## Use service in your controller or another Symfony part:
+### Use service in your controller or another Symfony part:
 
 controller method:
 
