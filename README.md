@@ -105,3 +105,21 @@ Now in order to authenticate user, you need to add link to the route like this:
     Login
 </a>
 ```
+
+### Check if Drive API access token is expired and authorize:
+
+In your controller add following code:
+
+```
+if($driveApiService->isTokenExpired()){
+   
+   // When auth is finished, redirect back to this URL:
+   $driveApiService->setRedirectPathAfterAuth(
+      $this->get('request_stack')->getCurrentRequest()->getRequestUri()
+   );
+   
+   // Redirect
+   return $this->redirectToRoute( $driveApiService->getAuthRouteName() );
+}
+```
+
