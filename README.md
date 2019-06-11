@@ -129,7 +129,7 @@ if($driveApiService->isTokenExpired()){
 
 ### Version 0.2
 
-- [ ] Automatically refresh access_token using refresh_token
+- [x] Automatically refresh access_token using refresh_token
 - [ ] Automatically create the auth route on installation
 - [ ] Automatically add VATRI_DRIVE_CREDENTIALS_FILE= to _.env_ on installation
 - [ ] Parameter _vatri_google_drive.redirect_after_login_url_ to _.env_ variable (auto add to _.env_ as well)

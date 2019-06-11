@@ -4,9 +4,11 @@ namespace Vatri\GoogleDriveBundle\Service;
 
 use function dd;
 use Google_Service_Drive_DriveFile;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 
 class DriveApiService
 {
@@ -24,22 +26,27 @@ class DriveApiService
 	/**
 	 * @var string $access_token_key Key in SESSION where we store Drive access token
 	 **/
-	private $access_token_key;
+//	private $access_token_key;
 
 	/**
 	 * @var Google_Service_Drive $drive
 	 **/
 	private $drive;
 
-	public function __construct(SessionInterface $session, ParameterBagInterface $parameters)
+    /**
+     * @var TokenStorageInterface
+     */
+	private $token_storage;
+
+
+	public function __construct(SessionInterface $session, ParameterBagInterface $parameters, TokenStorageInterface $tokenStorage)
     {
 		$this->session    = $session;
 		$this->parameters = $parameters;
 
-		$this->access_token_key = $parameters->get('vatri_google_drive.session_access_token_key');
+//		$this->access_token_key = $parameters->get('vatri_google_drive.session_access_token_key');
 
-		// $this->drive = $this->generateDrive();
-
+		$this->token_storage = $tokenStorage;
 	}
 
 	/**
@@ -81,9 +88,11 @@ If you use a Google API Client Library, the client object refreshes the access t
 		$client = new \Google_Client();
 		$client->setAuthConfig( $this->parameters->get('vatri_google_drive.credentials_file') );
 		$client->addScope( \Google_Service_Drive::DRIVE ); // should have all permissions
-		$client->setAccessToken( $this->session->get($this->access_token_key) );
+//		$client->setAccessToken( $this->session->get($this->access_token_key) );
+        $client->setAccessToken( $this->token_storage->getToken() );
 
-		$access_token = $this->session->get($this->access_token_key);
+//		$access_token = $this->session->get($this->access_token_key);
+        $access_token = $this->token_storage->getToken();
 		if(isset($access_token['refresh_token'])){
 			$client->fetchAccessTokenWithRefreshToken();
 		}
@@ -111,6 +120,15 @@ If you use a Google API Client Library, the client object refreshes the access t
             return $this->buildDrive();
         }
         return $this->drive;
+    }
+
+
+    /**
+     * @return TokenStorageInterface
+     */
+    public function getTokenStorage() : TokenStorageInterface
+    {
+        return $this->token_storage;
     }
 
     /**
@@ -274,18 +292,18 @@ If you use a Google API Client Library, the client object refreshes the access t
      * @param string $name Name to search for
      * @param string $parentId
      */
-//     public function find(string $name, string $parentId = ''): ?Google_Service_Drive_FileList
-//     {
-//         $q = "name = '$name'";
-//         if ($parentId != '') {
-//             $q .= " and parents in '$parentId' ";
-//         }
-//         $res = $this->generateDrive()->files->listFiles([
-//             'q' => $q
-//         ]);
+     public function find(string $name, string $parentId = ''): ?Google_Service_Drive_FileList
+     {
+         $q = "name = '$name'";
+         if ($parentId != '') {
+             $q .= " and parents in '$parentId' ";
+         }
+         $res = $this->generateDrive()->files->listFiles([
+             'q' => $q
+         ]);
 
-//         return $res;
-//     }
+         return $res;
+     }
 
 	/**
 	 * @return ??
@@ -341,13 +359,11 @@ If you use a Google API Client Library, the client object refreshes the access t
 	 **/
 	public function isTokenExpired()
     {
-		$access_token = $this->session->get($this->access_token_key);
-// dump($access_token);
-// die;
+		$access_token = $this->token_storage->getToken();
+
 		if( empty($access_token) || ! isset($access_token['access_token']) || ! isset($access_token['refresh_token']) ){
 			return true;
 		}
-
 
 		// Check if token will expire in 10 or less minutes:
 		return $access_token['expires_in'] + $access_token['created'] <= time() - 10*60;
