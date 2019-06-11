@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 use Vatri\GoogleDriveBundle\Service\DriveApiService;
+use Vatri\GoogleDriveBundle\Service\TokenStorageInterface;
 
 class DriveApiServiceTest extends TestCase
 {
@@ -32,7 +33,7 @@ class DriveApiServiceTest extends TestCase
      */
     private $parameters_mock;
 
-    public function setUp()
+    protected function setUp() : void
     {
 
         $this->valid_access_token = [
@@ -48,7 +49,7 @@ class DriveApiServiceTest extends TestCase
         // Generate mock drive
         $this->session_mock->method('get')->willReturn($this->valid_access_token);
 
-        $service = new DriveApiService($this->session_mock, $this->parameters_mock);
+        //$service = new DriveApiService($this->session_mock, $this->parameters_mock);
         $drive = $this->createMock(\Google_Service_Drive::class);
 
         $driveFile = $this->createMock(\Google_Service_Drive_DriveFile::class);
@@ -62,7 +63,9 @@ class DriveApiServiceTest extends TestCase
 
     public function testInitializationSuccess()
     {
-        $service = new DriveApiService($this->session_mock, $this->parameters_mock);
+        $ts = $this->createMock(TokenStorageInterface::class);
+        
+        $service = new DriveApiService($this->session_mock, $this->parameters_mock, $ts);
         $this->assertTrue($service instanceof DriveApiService);
     }
 
@@ -74,14 +77,16 @@ class DriveApiServiceTest extends TestCase
 
     public function testIsTokenExpired()
     {
+        $ts = $this->createMock(TokenStorageInterface::class);
+        $ts->method('getToken')->willReturn($this->valid_access_token);
 
-        $service = new DriveApiService($this->session_mock, $this->parameters_mock);
+        $service = new DriveApiService($this->session_mock, $this->parameters_mock, $ts);
         // Expired token:
-        $this->session_mock->method('get')->willReturn($this->valid_access_token);
+        // $this->session_mock->method('get')->willReturn($this->valid_access_token);
         $this->assertTrue($service->isTokenExpired());
 
         // Valid token:
-        $this->session_mock->method('get')->willReturn([
+        $ts->method('getToken')->willReturn([
             'access_token' => '123',
             'refresh_token' => '456',
             'created' => time() - 10, // secs ago.
@@ -90,7 +95,7 @@ class DriveApiServiceTest extends TestCase
         $this->assertTrue($service->isTokenExpired());
 
         // Token not set:
-        $this->session_mock->method('get')->willReturn([
+        $ts->method('getToken')->willReturn([
             // 'access_token'  => '123',
             'refresh_token' => '456',
             'created' => time() - 10, // secs ago.
@@ -99,7 +104,7 @@ class DriveApiServiceTest extends TestCase
         $this->assertTrue($service->isTokenExpired());
 
         // Refresh token not set:
-        $this->session_mock->method('get')->willReturn([
+        $ts->method('getToken')->willReturn([
             'access_token' => '123',
             // 'refresh_token' => '456',
             'created' => time() - 10, // secs ago.
@@ -111,14 +116,18 @@ class DriveApiServiceTest extends TestCase
 
     public function testAuthRouteCorrect()
     {
-        $service = new DriveApiService($this->session_mock, $this->parameters_mock);
+        $ts = $this->createMock(TokenStorageInterface::class);
+
+        $service = new DriveApiService($this->session_mock, $this->parameters_mock, $ts);
 
         $this->assertEquals($service->getAuthRouteName(), 'vatri_google_drive_auth');
     }
 
     public function testSettingRedirectAfterAuthPath()
     {
-        $service = new DriveApiService($this->session_mock, $this->parameters_mock);
+        $ts = $this->createMock(TokenStorageInterface::class);
+
+        $service = new DriveApiService($this->session_mock, $this->parameters_mock, $ts);
 
         $res = $service->setRedirectPathAfterAuth('path/sub-path');
 
@@ -127,9 +136,12 @@ class DriveApiServiceTest extends TestCase
 
     public function testCopyMethod()
     {
-        $this->session_mock->method('get')->willReturn($this->valid_access_token);
+        //$this->session_mock->method('get')->willReturn($this->valid_access_token);
+        
+        $ts = $this->createMock(TokenStorageInterface::class);
+        $ts->method('getToken')->willReturn($this->valid_access_token);
 
-        $service = new DriveApiService($this->session_mock, $this->parameters_mock);
+        $service = new DriveApiService($this->session_mock, $this->parameters_mock, $ts);
         $drive = $this->createMock(\Google_Service_Drive::class);
 
         $driveFile = $this->createMock(\Google_Service_Drive_DriveFile::class);
@@ -148,7 +160,9 @@ class DriveApiServiceTest extends TestCase
 
     public function testSetStarredFile()
     {
-        $service = new DriveApiService($this->session_mock, $this->parameters_mock);
+        $ts = $this->createMock(TokenStorageInterface::class);
+
+        $service = new DriveApiService($this->session_mock, $this->parameters_mock, $ts);
 
         $driveFile = $this->createMock(\Google_Service_Drive_DriveFile::class);
         $driveFile->method('getId')->willReturn('123');

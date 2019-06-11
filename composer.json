@@ -3,7 +3,8 @@
     "type": "symfony-bundle",
     "description": "Google Drive API Bundle",
     "require": {
-        "google/apiclient": "^2.2"
+        "google/apiclient": "^2.2",
+        "symfony/framework-bundle": "^4.3"
     },
     "license": "MIT",
     "authors": [
