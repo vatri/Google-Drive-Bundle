@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Vatri\GoogleDriveBundle\Service\DriveApiService;
 
 
 class VatriGoogleDriveAuthController extends AbstractController
@@ -21,28 +22,26 @@ class VatriGoogleDriveAuthController extends AbstractController
 	 **/
 	private $parameterBag;
 
-	/**
-	 * @var string $access_token_key Key in SESSION where we store Drive access token
-	 **/
-	private $access_token_key;
+    /**
+     * @var DriveApiService
+     */
+    private $driveApiService;
 
-	public function __construct(ParameterBagInterface $parameterBag, SessionInterface $session){
-		$this->parameterBag = $parameterBag;
-		$this->session      = $session;
-
-		$this->access_token_key = $parameterBag->get('vatri_google_drive.session_access_token_key');
+	public function __construct(ParameterBagInterface $parameterBag, SessionInterface $session, DriveApiService $driveApiService)
+    {
+		$this->parameterBag      = $parameterBag;
+		$this->session           = $session;
+        $this->driveApiService = $driveApiService;
 	}
     /**
      * @Route("/vatri_google_drive/auth", name="vatri_google_drive_auth")
-     *
-     * @todo: Merge index and callback methods!
      */
     public function index()
     {
 		
     	$client = new \Google_Client();
     	try{
-			$client->setAuthConfigFile($this->parameterBag->get('vatri_google_drive.credentials_file'));
+			$client->setAuthConfig($this->parameterBag->get('vatri_google_drive.credentials_file'));
 		} catch(\Exception $e){
 			return new \Symfony\Component\HttpFoundation\Response('ERROR: ' . $e->getMessage() . '. Please download credentials file from Google Console to '.$this->parameterBag->get('vatri_google_drive.credentials_file'));
 		}
@@ -55,16 +54,16 @@ class VatriGoogleDriveAuthController extends AbstractController
 		$client->setPrompt('consent');
 		
 		if (! isset($_GET['code'])) {
-			// $access_token = $this->session->get($this->access_token_key);
+//			$access_token = $this->drive_api_service->getTokenStorage()->getToken();
 			// if(isset($access_token['access_token'])){
 			// 	$client->revokeToken($access_token['access_token']);
 			// }
 			$auth_url = $client->createAuthUrl();
 			return $this->redirect($auth_url);
 		} else {
-			$client->authenticate($_GET['code']);
-			$this->session->set($this->access_token_key, $client->getAccessToken() );
-
+			$client->fetchAccessTokenWithAuthCode($_GET['code']);
+			//$this->session->set($this->access_token_key, $client->getAccessToken() );
+            $this->driveApiService->getTokenStorage()->setToken($client->getAccessToken());
             $session_redirect = $this->session->get(
                 $this->parameterBag->get('vatri_google_drive.session.key.redirect_path_after_auth')
             );

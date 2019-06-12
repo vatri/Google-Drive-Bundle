@@ -58,15 +58,57 @@ return [
 
 # Usage
 
-### Download and configure JSON credentials file
+### 1. If you don't use Symfony Flex
+
+If you don't use Symfony Flex, you will need to:
+
+1. Add following variables to your _.env_ file:
+
+```
+VATRI_GOOGLE_DRIVE_CREDENTIALS_FILE=config/YOUR_FILENAME.json`
+VATRI_GOOGLE_DRIVE_REDIRECT_AFTER_AUTH
+```
+
+**Don't forget to replace default ones with your values.**
+
+2. Create _/config/routes/vatri_google_drive.yaml_ file with following contents:
+
+```
+vatri_google_drive:
+    resource: '@VatriGoogleDriveBundle/Controller/'
+    type:     annotation
+```
+
+### 2. Download and configure JSON credentials file
 
 Download your JSON credentials file from Google Console to _/config_ folder within Symfony project.
 
-Add following variable to _.env_ file:
+Edit following variables in _.env_ file:
 
-  `VATRI_DRIVE_CREDENTIALS_FILE=config/google-drive-api-client_secrets.json-example.json`
+  `VATRI_GOOGLE_DRIVE_CREDENTIALS_FILE=config/google-drive-api-client_secrets.json-example.json`
+  `VATRI_GOOGLE_DRIVE_REDIRECT_AFTER_AUTH=/path/to/your/route`
 
-### Use DriveApiService in your controller or another Symfony part like this:
+### 3. Check and use AuthController
+
+1. Run
+
+`php bin/console debug:router`
+
+and check if you have a route like this:
+
+```
+vatri_google_drive_auth       ANY      ANY      ANY    <href=>/vatri_google_drive/auth
+```
+
+2. Now in order to authenticate users, you need to add link to the route like this:
+
+```
+<a href="{{ path('vatri_google_drive_auth') }}">
+    Login
+</a>
+```
+
+### 4. Use DriveApiService in your controller or another Symfony part like this:
 
 ```
    use App\Vatri\GoogleDriveBundle\Service\DriveApiService;
@@ -83,32 +125,8 @@ Add following variable to _.env_ file:
    }
 ```
 
-### Use authentication controller route to authorize users
 
-Add following code to /config/routes.yaml:
-
-```
-controllers:
-    ...
-    resource: '@VatriGoogleDriveBundle/Controller/'
-    type:     annotation
-```
-
-Now you should have a new route like this:
-
-```
-vatri_google_drive_auth       ANY      ANY      ANY    <href=>/vatri_google_drive/auth
-```
-
-Now in order to authenticate users, you need to add link to the route like this:
-
-```
-<a href="{{ path('vatri_google_drive_auth') }}">
-    Login
-</a>
-```
-
-### Check if Drive API access token is expired and authorize if required:
+### 5. Check if Drive API access token is expired and authorize if required:
 
 Add the following code to your controller or other part:
 
@@ -129,8 +147,9 @@ if($driveApiService->isTokenExpired()){
 
 ### Version 0.2
 
-- [ ] Automatically refresh access_token using refresh_token
-- [ ] Automatically create the auth route on installation
-- [ ] Automatically add VATRI_DRIVE_CREDENTIALS_FILE= to _.env_ on installation
-- [ ] Parameter _vatri_google_drive.redirect_after_login_url_ to _.env_ variable (auto add to _.env_ as well)
-- [ ] Uniformed responses from _DriveApiService_
+- [x] Automatically refresh access_token using refresh_token
+- [x] Uniformed responses from _DriveApiService_ , a class
+- [x] Automatically create the auth route on installation
+- [x] Automatically add VATRI_DRIVE_CREDENTIALS_FILE= to _.env_ on installation
+- [x] Parameter _vatri_google_drive.redirect_after_login_url_ to _.env_ variable (auto add to _.env_ as well)
+- [ ] Test Symfony Flex recipe
