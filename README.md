@@ -152,3 +152,4 @@ if($driveApiService->isTokenExpired()){
 - [x] Automatically create the auth route on installation
 - [x] Automatically add VATRI_DRIVE_CREDENTIALS_FILE= to _.env_ on installation
 - [x] Parameter _vatri_google_drive.redirect_after_login_url_ to _.env_ variable (auto add to _.env_ as well)
+- [ ] Test Symfony Flex recipe
