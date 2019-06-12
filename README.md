@@ -62,9 +62,10 @@ return [
 
 Download your JSON credentials file from Google Console to _/config_ folder within Symfony project.
 
-Add following variable to _.env_ file:
+Add following variables to _.env_ file:
 
-  `VATRI_DRIVE_CREDENTIALS_FILE=config/google-drive-api-client_secrets.json-example.json`
+  `VATRI_GOOGLE_DRIVE_CREDENTIALS_FILE=config/google-drive-api-client_secrets.json-example.json`
+  `VATRI_GOOGLE_DRIVE_REDIRECT_AFTER_AUTH=/path/to/your/route`
 
 ### Use DriveApiService in your controller or another Symfony part like this:
 
@@ -133,4 +134,4 @@ if($driveApiService->isTokenExpired()){
 - [x] Uniformed responses from _DriveApiService_ , a class
 - [ ] Automatically create the auth route on installation
 - [ ] Automatically add VATRI_DRIVE_CREDENTIALS_FILE= to _.env_ on installation
-- [ ] Parameter _vatri_google_drive.redirect_after_login_url_ to _.env_ variable (auto add to _.env_ as well)
+- [x] Parameter _vatri_google_drive.redirect_after_login_url_ to _.env_ variable (auto add to _.env_ as well)

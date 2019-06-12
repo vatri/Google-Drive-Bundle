@@ -16,6 +16,9 @@ class Configuration implements ConfigurationInterface
             ->scalarNode("credentials_file")
                 ->defaultValue('%kernel.project_dir%/config/google-drive-api-client_secrets.json')
             ->end()
+            ->scalarNode("redirect_after_login_url")
+                ->defaultValue("/")
+            ->end()
         ->end();
 // dump($treeBuilder);
         return $treeBuilder;
