@@ -79,30 +79,44 @@ If you use a Google API Client Library, the client object refreshes the access t
 	// }
 
     /**
+     * Generate Google_Client automatically
+     *
+     * @return \Google_Client
+     */
+    private function buildClient() : \Google_Client
+    {
+        $client = new \Google_Client();
+        $client->setAuthConfig( $this->parameters->get('vatri_google_drive.credentials_file') );
+        $client->addScope( \Google_Service_Drive::DRIVE ); // should have all permissions
+//		$client->setAccessToken( $this->session->get($this->access_token_key) );
+        $client->setAccessToken( $this->token_storage->getToken() );
+
+        return $client;
+    }
+
+    /**
      * Build $drive property automaticaly
      *
      * @return \Google_Service_Drive
      */
 	private function buildDrive() : \Google_Service_Drive
 	{
-		$client = new \Google_Client();
-		$client->setAuthConfig( $this->parameters->get('vatri_google_drive.credentials_file') );
-		$client->addScope( \Google_Service_Drive::DRIVE ); // should have all permissions
-//		$client->setAccessToken( $this->session->get($this->access_token_key) );
-        $client->setAccessToken( $this->token_storage->getToken() );
+        $client = $this->buildClient();
 
-//		$access_token = $this->session->get($this->access_token_key);
-        $access_token = $this->token_storage->getToken();
-		if(isset($access_token['refresh_token'])){
-			$client->fetchAccessTokenWithRefreshToken();
-		}
-// dump($this->session->get('access_token'));
+        // If token is expired and refresh_token is set, fetch new access_token using refresh_token:
+//        $access_token = $this->token_storage->getToken();
+//		if($this->isTokenExpired() && isset($access_token['refresh_token'])){
+////			$new_token = $client->fetchAccessTokenWithRefreshToken();
+////            $this->getTokenStorage()->setToken($new_token);
+//            $this->refreshToken();
+//		}
+
 		$drive = new \Google_Service_Drive( $client );
 
 		return $drive;
 	}
 
-	public function setDrive(\Google_Service_Drive $drive)
+	public function setDrive(\Google_Service_Drive $drive) : void
 	{
 		$this->drive = $drive;
 	}
@@ -112,7 +126,7 @@ If you use a Google API Client Library, the client object refreshes the access t
     *
     * @return Google_Service_Drive|\Google_Service_Drive
     */
-    public function getDrive()
+    public function getDrive() : \Google_Service_Drive
     {
 
 // setDrive and getDrive is used for unit-tests...
@@ -138,7 +152,7 @@ If you use a Google API Client Library, the client object refreshes the access t
      * @param null $parentId
      * @return array|null
      */
-	public function createFolder($path, $parentId = null) :? array
+	public function createFolder($path, $parentId = null) : array
 	{
 
 		$drive = $this->buildDrive();
@@ -184,7 +198,7 @@ If you use a Google API Client Library, the client object refreshes the access t
      * @param bool $inTrash
      * @return bool
      */
-	public function folderExists(?string $folderId, bool $inTrash = true)
+	public function folderExists(?string $folderId, bool $inTrash = true) : bool
 	{
 		$drive = $this->buildDrive();
 
@@ -213,7 +227,7 @@ If you use a Google API Client Library, the client object refreshes the access t
 	 * @param string $fileId ID of Drive file
 	 * @return bool
 	 **/
-	public function deleteFile(string $fileId)
+	public function deleteFile(string $fileId) : bool
 	{
 		
 		$drive = $this->buildDrive();
@@ -262,7 +276,7 @@ If you use a Google API Client Library, the client object refreshes the access t
      * @param string $fileId
      * @param string|null $parentId Where to move copied file.
      */
-    public function copyFile(string $fileId, ?string $parentId = null)
+    public function copyFile(string $fileId, ?string $parentId = null) : array
     {
 //        $drive = $this->generateDrive();
         $drive = $this->getDrive();
@@ -308,7 +322,7 @@ If you use a Google API Client Library, the client object refreshes the access t
 	/**
 	 * @return ??
 	 **/
-	public function uploadFile(UploadedFile $file, $parentId = null)
+	public function uploadFile(UploadedFile $file, $parentId = null) : bool
 	{
 		$drive = $this->buildDrive();
 
@@ -341,7 +355,7 @@ If you use a Google API Client Library, the client object refreshes the access t
      * @param string $key
      * @param string $value
      */
-	public function setStarred(string $fileId, bool $starred)
+	public function setStarred(string $fileId, bool $starred) : bool
     {
 //        $fileId .= '1';
         $file = new Google_Service_Drive_DriveFile();
@@ -357,30 +371,64 @@ If you use a Google API Client Library, the client object refreshes the access t
 	/**
 	 * @return bool
 	 **/
-	public function isTokenExpired()
+	public function isTokenExpired() : bool
     {
-		$access_token = $this->token_storage->getToken();
+		$access_token = $this->getTokenStorage()->getToken();
 
-		if( empty($access_token) || ! isset($access_token['access_token']) || ! isset($access_token['refresh_token']) ){
+//		if( empty($access_token) || ! isset($access_token['access_token']) || ! isset($access_token['refresh_token']) ){
+        if( empty($access_token) || ! isset($access_token['access_token']) ){
 			return true;
 		}
 
 		// Check if token will expire in 10 or less minutes:
-		return $access_token['expires_in'] + $access_token['created'] <= time() - 10*60;
+        $expired = $this->checkExpiresIn($access_token);
+
+        // If expired, try to refresh and check again.
+        if($expired == true){
+            $this->refreshToken();
+            $access_token = $this->getTokenStorage()->getToken();
+            $expired = $this->checkExpiresIn($access_token);
+        }
+
+        return $expired;
 	}
+
+    /**
+     * Check existing token and it's properties and calculate if expired.
+     *
+     * @param array $access_token
+     * @return bool
+     */
+	private function checkExpiresIn(array $access_token) : bool
+    {
+        return $access_token['created'] + $access_token['expires_in'] <= time() - 10*60;
+    }
+
+    /**
+     * Get current client, fetch new token using refresh_token and update token in a TokenStorage
+     *
+     * @return void
+     */
+	private function refreshToken() : void
+    {
+        $client = $this->getDrive()->getClient();
+        $access_token = $client->fetchAccessTokenWithRefreshToken();
+
+        $this->getTokenStorage()->setToken($access_token);
+    }
 
 	/**
 	 * @return string Symfony route name
 	 **/
-	public function getAuthRouteName()
+	public function getAuthRouteName() : string
     {
-		return 'vatri_google_drive_auth';
+		return 'vatri_google_drive_auth'; // should not be modified
 	}
 
     /**
      * @param string $route_name
      */
-	public function setRedirectPathAfterAuth(string $path)
+	public function setRedirectPathAfterAuth(string $path) : void
     {
         $this->session->set(
             $this->parameters->get('vatri_google_drive.session.key.redirect_path_after_auth'),
