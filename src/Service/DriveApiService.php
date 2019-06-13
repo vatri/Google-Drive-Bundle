@@ -415,7 +415,7 @@ class DriveApiService
     public function setRedirectPathAfterAuth(string $path): void
     {
         $this->session->set(
-            $this->parameters->get('vatri_google_drive.session.key.redirect_path_after_auth'),
+            $this->parameters->get('vatri_google_drive__session__key__redirect_path_after_auth'),
             $path
         );
     }

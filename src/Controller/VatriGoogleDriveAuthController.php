@@ -65,7 +65,7 @@ class VatriGoogleDriveAuthController extends AbstractController
 			//$this->session->set($this->access_token_key, $client->getAccessToken() );
             $this->driveApiService->getTokenStorage()->setToken($client->getAccessToken());
             $session_redirect = $this->session->get(
-                $this->parameterBag->get('vatri_google_drive.session.key.redirect_path_after_auth')
+                $this->parameterBag->get('vatri_google_drive__session__key__redirect_path_after_auth')
             );
             if(!empty($session_redirect)){
 				return $this->redirect($session_redirect);
