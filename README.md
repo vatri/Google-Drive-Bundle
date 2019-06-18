@@ -56,22 +56,19 @@ return [
 ];
 ```
 
-# Usage
+Usage
+============
 
-### 1. If you don't use Symfony Flex
-
-If you don't use Symfony Flex, you will need to:
-
-1. Add following variables to your _.env_ file:
+### 1. Add/edit following variables in your _.env_ file:
 
 ```
 VATRI_GOOGLE_DRIVE_CREDENTIALS_FILE=config/YOUR_FILENAME.json`
 VATRI_GOOGLE_DRIVE_REDIRECT_AFTER_AUTH
 ```
 
-**Don't forget to replace default ones with your values.**
+**Don't forget to replace default values with yours.**
 
-2. Create _/config/routes/vatri_google_drive.yaml_ file with following contents:
+### 2. Create (or check if exists) _/config/routes/vatri_google_drive.yaml_ file with following contents:
 
 ```
 vatri_google_drive:
@@ -79,7 +76,7 @@ vatri_google_drive:
     type:     annotation
 ```
 
-### 2. Download and configure JSON credentials file
+### 3. Download and configure JSON credentials file
 
 Download your JSON credentials file from Google Console to _/config_ folder within Symfony project.
 
@@ -88,7 +85,7 @@ Edit following variables in _.env_ file:
   `VATRI_GOOGLE_DRIVE_CREDENTIALS_FILE=config/google-drive-api-client_secrets.json-example.json`
   `VATRI_GOOGLE_DRIVE_REDIRECT_AFTER_AUTH=/path/to/your/route`
 
-### 3. Check and use AuthController
+### 4. Check and use AuthController
 
 1. Run
 
@@ -108,7 +105,7 @@ vatri_google_drive_auth       ANY      ANY      ANY    <href=>/vatri_google_driv
 </a>
 ```
 
-### 4. Use DriveApiService in your controller or another Symfony part like this:
+### 5. Use DriveApiService in your controller or another Symfony part like this:
 
 ```
    use App\Vatri\GoogleDriveBundle\Service\DriveApiService;
@@ -126,7 +123,7 @@ vatri_google_drive_auth       ANY      ANY      ANY    <href=>/vatri_google_driv
 ```
 
 
-### 5. Check if Drive API access token is expired and authorize if required:
+### 6. Check if Drive API access token is expired and authorize if required:
 
 Add the following code to your controller or other part:
 
@@ -145,11 +142,11 @@ if($driveApiService->isTokenExpired()){
 
 # Roadmap
 
-### Version 0.2
+### Version 1.1
+
+- [ ] Symfony Flex recipe
+
+### Version 1.0
 
 - [x] Automatically refresh access_token using refresh_token
 - [x] Uniformed responses from _DriveApiService_ , a class
-- [x] Automatically create the auth route on installation
-- [x] Automatically add VATRI_DRIVE_CREDENTIALS_FILE= to _.env_ on installation
-- [x] Parameter _vatri_google_drive.redirect_after_login_url_ to _.env_ variable (auto add to _.env_ as well)
-- [ ] Test Symfony Flex recipe
