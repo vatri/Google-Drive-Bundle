@@ -2,8 +2,6 @@
 
 namespace Vatri\GoogleDriveBundle\Service;
 
-use function dd;
-use function error_log;
 use Google_Service_Drive_DriveFile;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
