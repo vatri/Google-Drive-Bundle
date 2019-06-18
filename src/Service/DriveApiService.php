@@ -3,6 +3,7 @@
 namespace Vatri\GoogleDriveBundle\Service;
 
 use function dd;
+use function error_log;
 use Google_Service_Drive_DriveFile;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -369,11 +370,13 @@ class DriveApiService
 
         // If expired, try to refresh and check again.
         if ($expired == true) {
-            $this->refreshToken();
-            $access_token = $this->getTokenStorage()->getToken();
-            $expired = $this->checkExpiresIn($access_token);
-        }
+            // $access_token = $this->getTokenStorage()->getToken();
+            // Above line won't work b/c a new cookie is visible only AFTER refreshing page
+            $access_token = $this->refreshToken();
 
+            $expired = $this->checkExpiresIn($access_token);
+
+        }
         return $expired;
     }
 
@@ -389,16 +392,18 @@ class DriveApiService
     }
 
     /**
-     * Get current client, fetch new token using refresh_token and update token in a TokenStorage
+     * Get current client, fetch new token using refresh_token, update token in a TokenStorage and return new token
      *
-     * @return void
+     * @return array
      */
-    private function refreshToken(): void
+    private function refreshToken(): array
     {
         $client = $this->getDrive()->getClient();
         $access_token = $client->fetchAccessTokenWithRefreshToken();
 
         $this->getTokenStorage()->setToken($access_token);
+
+        return $access_token;
     }
 
     /**
