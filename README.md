@@ -70,7 +70,7 @@ VATRI_GOOGLE_DRIVE_REDIRECT_AFTER_AUTH
 
 ### 2. Create (or check if exists) _/config/routes/vatri_google_drive.yaml_ file with following contents:
 
-```
+```yaml
 vatri_google_drive:
     resource: '@VatriGoogleDriveBundle/Controller/'
     type:     annotation
@@ -99,7 +99,7 @@ vatri_google_drive_auth       ANY      ANY      ANY    <href=>/vatri_google_driv
 
 2. Now in order to authenticate users, you need to add link to the route like this:
 
-```
+```html
 <a href="{{ path('vatri_google_drive_auth') }}">
     Login
 </a>
@@ -107,19 +107,19 @@ vatri_google_drive_auth       ANY      ANY      ANY    <href=>/vatri_google_driv
 
 ### 5. Use DriveApiService in your controller or another Symfony part like this:
 
-```
-   use App\Vatri\GoogleDriveBundle\Service\DriveApiService;
-   ...
+```php
+ use App\Vatri\GoogleDriveBundle\Service\DriveApiService;
+ ...
 
-   public function test(Request $request, DriveApiService $driveApiService): Response
-   {
-     if($driveApiService->isTokenExpired()){
-        return $this->redirectToRoute( $driveApiService->getAuthRouteName() );
-     }
-     $folderId = '[YOUR ID]';
-     $res = $driveApiService->listFiles($folderId, false, true );
-     dd($res);
+ public function test(Request $request, DriveApiService $driveApiService): Response
+ {
+   if($driveApiService->isTokenExpired()){
+      return $this->redirectToRoute( $driveApiService->getAuthRouteName() );
    }
+   $folderId = '[YOUR ID]';
+   $res = $driveApiService->listFiles($folderId, false, true );
+   dd($res);
+ }
 ```
 
 
@@ -127,7 +127,7 @@ vatri_google_drive_auth       ANY      ANY      ANY    <href=>/vatri_google_driv
 
 Add the following code to your controller or other part:
 
-```
+```php
 if($driveApiService->isTokenExpired()){
    
    // When auth is finished, redirect back to this URL:
