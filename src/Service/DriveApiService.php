@@ -232,14 +232,18 @@ class DriveApiService
     {
         $drive = $this->getDrive();
 
-        $q = " trashed = " . ($includeTrashed ? 'true' : 'false');
+        $filters = []; // List of queries for $q variable
 
+        if($includeTrashed == false) {
+            $filters[] = " trashed = false ";
+        }
         if ($parentId != '') {
-            $q .= " and parents in '$parentId' ";
+            $filters[] = " parents in '$parentId' ";
         }
         if ($onlyStarred == true) {
-            $q .= " and starred = true ";
+            $filters[] = " starred = true ";
         }
+        $q = implode(" and ", $filters);
 
         $res = $drive->files->listFiles([
             'q' => $q,
