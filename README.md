@@ -155,4 +155,4 @@ if($driveApiService->isTokenExpired()){
 ### Version 1.0
 
 - [x] Automatically refresh access_token using refresh_token
-- [x] Uniformed responses from _DriveApiService_ , a class
+- [x] Uniformed responses from _DriveApiService_ (a class)
