@@ -87,6 +87,10 @@ Edit following variables in _.env_ file:
 
 ### 4. Check and use AuthController
 
+AuthController is default controller required for authorization of users via Google API. By default it saves an access token to cookie. 
+
+Also note that if you use this controller for authorization, you will add below route as callback URL in Google Console Credentials configuration.
+
 1. Run
 
 `php bin/console debug:router`
@@ -108,10 +112,10 @@ vatri_google_drive_auth       ANY      ANY      ANY    <href=>/vatri_google_driv
 ### 5. Use DriveApiService in your controller or another Symfony part like this:
 
 ```php
- use App\Vatri\GoogleDriveBundle\Service\DriveApiService;
+ use Vatri\GoogleDriveBundle\Service\DriveApiService;
  ...
 
- public function test(Request $request, DriveApiService $driveApiService): Response
+ public function test(DriveApiService $driveApiService): Response
  {
    if($driveApiService->isTokenExpired()){
       return $this->redirectToRoute( $driveApiService->getAuthRouteName() );
@@ -145,6 +149,8 @@ if($driveApiService->isTokenExpired()){
 ### Version 1.1
 
 - [ ] Symfony Flex recipe
+- [ ] Logout controller
+- [ ] Configure token storage (including custom one)
 
 ### Version 1.0
 
