@@ -63,7 +63,7 @@ Usage
 
 ```
 VATRI_GOOGLE_DRIVE_CREDENTIALS_FILE=config/YOUR_FILENAME.json`
-VATRI_GOOGLE_DRIVE_REDIRECT_AFTER_AUTH
+VATRI_GOOGLE_DRIVE_REDIRECT_AFTER_AUTH=/
 ```
 
 **Don't forget to replace default values with yours.**
