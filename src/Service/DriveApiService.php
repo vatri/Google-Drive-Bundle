@@ -222,6 +222,30 @@ class DriveApiService
     }
 
     /**
+     * @param string $fileId
+     * @param string $newName
+     */
+    public function renameResource(string $fileId, string $newName)
+    {
+        $drive = $this->getDrive();
+
+        $fileParams = [
+            'name' => $newName,
+        ];
+
+        $fileMetadata = new \Google_Service_Drive_DriveFile($fileParams);
+
+        try{
+
+            $drive->files->update($fileId, $fileMetadata);
+            return true;
+
+        } catch (\Exception $e){
+            return false;
+        }
+    }
+
+    /**
      * @param string|null $parentId
      * @param bool|null $includeTrashed
      * @param bool|null $onlyStarred
