@@ -13,6 +13,7 @@ Google Drive API Bundle for Symfony 4
   - Copy a file to specific directory
   - Upload a file
   - Add "starred" flag to a file/folder
+  - Rename resource (file or folder)
 
 Installation
 ============
@@ -146,7 +147,7 @@ if($driveApiService->isTokenExpired()){
 
 # Roadmap
 
-### Version 1.1
+### Version 1.2
 
 - [ ] Symfony Flex recipe
 - [ ] Logout controller
