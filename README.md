@@ -153,6 +153,10 @@ if($driveApiService->isTokenExpired()){
 - [ ] Logout controller
 - [ ] Configure token storage (including custom one)
 
+### Version 1.1
+
+- [x] renameFolder() method
+
 ### Version 1.0
 
 - [x] Automatically refresh access_token using refresh_token
