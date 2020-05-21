@@ -22,6 +22,8 @@ services:
 
   Vatri\GoogleDriveBundle\Controller\VatriGoogleDriveAuthController:
     public: true
+    autowire: true
+    autoconfigure: true
     arguments:
       $parameterBag: '@parameter_bag'
       $session: '@session'
