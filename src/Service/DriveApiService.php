@@ -158,7 +158,8 @@ class DriveApiService
                 $fileMetadata = new \Google_Service_Drive_DriveFile($fileParams);
 
                 $res = $drive->files->create($fileMetadata, [
-                    'fields' => 'id'
+                    'fields' => 'id',
+                    'supportsAllDrives' => true
                 ]);
 
                 $response->setResourceId($res->id);
@@ -184,7 +185,8 @@ class DriveApiService
         $res = null;
         try {
             $res = $drive->files->get($folderId, [
-                'fields' => 'id,trashed'
+                'fields' => 'id,trashed',
+                'supportsAllDrives' => true
             ]);
 
             if ($res->trashed) {
@@ -212,7 +214,7 @@ class DriveApiService
         $drive = $this->buildDrive();
 
         try {
-            $res = $drive->files->delete($fileId);
+            $res = $drive->files->delete($fileId, ['supportsAllDrives' => true]);
         } catch (\Exception $e) {
             return false;
         }
@@ -237,7 +239,7 @@ class DriveApiService
 
         try{
 
-            $drive->files->update($fileId, $fileMetadata);
+            $drive->files->update($fileId, $fileMetadata, ['supportsAllDrives' => true]);
             return true;
 
         } catch (\Exception $e){
@@ -252,7 +254,7 @@ class DriveApiService
      *
      * @return \Google_Service_Drive_FileList|null
      */
-    public function listFiles(?string $parentId = '', ?bool $includeTrashed = true, ?bool $onlyStarred = false): ?\Google_Service_Drive_FileList
+    public function listFiles(?string $parentId = '', ?bool $includeTrashed = true, ?bool $onlyStarred = false, $orderBy = 'folder,name'): ?\Google_Service_Drive_FileList
     {
         $drive = $this->getDrive();
 
@@ -272,6 +274,9 @@ class DriveApiService
         $res = $drive->files->listFiles([
             'q' => $q,
             'fields' => "files/*",
+            'supportsAllDrives' => true,
+            'includeItemsFromAllDrives' => true,
+            'orderBy' => $orderBy
         ]);
 
         return $res;
@@ -296,7 +301,7 @@ class DriveApiService
         }
 
         try {
-            $res = $drive->files->copy($fileId, $driveFile);
+            $res = $drive->files->copy($fileId, $driveFile, ['supportsAllDrives' => true]);
             $response->setResourceId($res->getId());
         } catch (\Exception $e) {
             $response->setError($e->getMessage());
@@ -316,7 +321,8 @@ class DriveApiService
             $q .= " and parents in '$parentId' ";
         }
         $res = $this->generateDrive()->files->listFiles([
-            'q' => $q
+            'q' => $q,
+            'supportsAllDrives' => true
         ]);
 
         return $res;
@@ -345,7 +351,8 @@ class DriveApiService
                     'data' => file_get_contents($file->getPathname()),
                     'mimeType' => $file->getClientMimeType(),
                     'uploadType' => 'multipart',
-                    // 'parents'   => $parentId == null ? [] : [$parentId]
+                    // 'parents'   => $parentId == null ? [] : [$parentId],
+                    'supportsAllDrives' => true
                 )
             );
 
@@ -370,7 +377,7 @@ class DriveApiService
         $file = new Google_Service_Drive_DriveFile();
         $file->setStarred($starred);
         try {
-            $res = $drive = $this->getDrive()->files->update($fileId, $file);
+            $res = $drive = $this->getDrive()->files->update($fileId, $file, ['supportsAllDrives' => true]);
             $response->setResourceId($res->getId());
         } catch (\Exception $e) {
             $response->setError($e->getMessage());
