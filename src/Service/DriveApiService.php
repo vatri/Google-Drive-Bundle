@@ -254,7 +254,7 @@ class DriveApiService
      *
      * @return \Google_Service_Drive_FileList|null
      */
-    public function listFiles(?string $parentId = '', ?bool $includeTrashed = true, ?bool $onlyStarred = false, $orderBy = 'folder,name'): ?\Google_Service_Drive_FileList
+    public function listFiles(?string $parentId = '', ?bool $includeTrashed = true, ?bool $onlyStarred = false, string $orderBy = 'folder,name', array $extra = []): ?\Google_Service_Drive_FileList
     {
         $drive = $this->getDrive();
 
@@ -271,13 +271,13 @@ class DriveApiService
         }
         $q = implode(" and ", $filters);
 
-        $res = $drive->files->listFiles([
+        $res = $drive->files->listFiles(array_merge([
             'q' => $q,
             'fields' => "files/*",
             'supportsAllDrives' => true,
             'includeItemsFromAllDrives' => true,
-            'orderBy' => $orderBy
-        ]);
+            'orderBy' => $orderBy,
+        ], $extra));
 
         return $res;
     }
