@@ -329,6 +329,21 @@ class DriveApiService
     }
 
     /**
+     * Find a file by ID
+     * 
+     * @param string $id Id to search for
+     */
+    public function findById(string $fileId)
+    {
+        $response = $this->getDrive()->files->get($fileId, [
+            'fields' => '*',
+            'supportsAllDrives' => true
+        ]);
+
+        return $response;
+    }
+
+    /**
      * @return ??
      **/
     public function uploadFile(UploadedFile $file, $parentId = null): DriveServiceResponse
