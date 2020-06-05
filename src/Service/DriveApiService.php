@@ -347,14 +347,13 @@ class DriveApiService
      * Download a file
      * 
      * @param string $fileId File to download Id
-     * @param string $path
-     * @param bool $googleDocument Determine if the file is a Google Document
+     * @param string $filepath The path where te file will be store
      * 
      * Warning : the path start inside the public directory (need to create manually the 'downloads/' folder)
      * 
-     * @return bool
+     * @return string $filepath
      */
-    public function downloadFile(string $fileId, bool $googleDocument = true, string $filepath = 'downloads/')
+    public function downloadFile(string $fileId, string $filepath = 'downloads/')
     {
         $drive = $this->getDrive();
 
@@ -363,8 +362,9 @@ class DriveApiService
 
         // Check for extension
         $filename = (isset(pathinfo($filename)['extension'])) ? $filename : $filename . '.' . $driveFile->getFileExtension();
-        
-        if ($googleDocument === false) {
+
+        // Differents exports links already set up for Google documents
+        if ($driveFile->getExportLinks() === null) {
             $response = $drive->files->get($driveFile->getId(), array(
                 'alt' => 'media'));
         } else {
@@ -377,11 +377,13 @@ class DriveApiService
             $filename = $driveFile->getName() . $fileInfos['extension'];
         }
 
+        $filepath .= $filename;
+
         $fileContent = $response->getBody()->getContents();
         
-        file_put_contents($filepath . $filename, $fileContent);
+        file_put_contents($filepath, $fileContent);
 
-        return true;
+        return $filepath;
     }
 
     /**
