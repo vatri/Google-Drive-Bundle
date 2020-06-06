@@ -329,6 +329,97 @@ class DriveApiService
     }
 
     /**
+     * Find a file by ID
+     * 
+     * @param string $id Id to search for
+     */
+    public function findById(string $fileId)
+    {
+        $response = $this->getDrive()->files->get($fileId, [
+            'fields' => '*',
+            'supportsAllDrives' => true
+        ]);
+
+        return $response;
+    }
+
+    /**
+     * Download a file
+     * 
+     * @param string $fileId File to download Id
+     * @param string $filepath The path where te file will be store
+     * 
+     * Warning : the path start inside the public directory (need to create manually the 'downloads/' folder)
+     * 
+     * @return string $filepath
+     */
+    public function downloadFile(string $fileId, string $filepath = 'downloads/')
+    {
+        $drive = $this->getDrive();
+
+        $driveFile = $this->findById($fileId);
+        $filename = $driveFile->getName();
+
+        // Check for extension
+        $filename = (isset(pathinfo($filename)['extension'])) ? $filename : $filename . '.' . $driveFile->getFileExtension();
+
+        // Differents exports links already set up for Google documents
+        if ($driveFile->getExportLinks() === null) {
+            $response = $drive->files->get($driveFile->getId(), array(
+                'alt' => 'media'));
+        } else {
+            // Drive uses special MIME Types, we need to convert them
+            $fileInfos = $this->getGoogleDocsFileInfos($driveFile->getMimeType());
+
+            $response = $drive->files->export($driveFile->getId(), $fileInfos['mimeType'], array(
+                'alt' => 'media'));
+
+            $filename = $driveFile->getName() . $fileInfos['extension'];
+        }
+
+        $filepath .= $filename;
+
+        $fileContent = $response->getBody()->getContents();
+        
+        file_put_contents($filepath, $fileContent);
+
+        return $filepath;
+    }
+
+    /**
+     * Convert Google Document MIME Type
+     * All the Google Documents MIME Type on : https://developers.google.com/drive/api/v2/ref-export-formats
+     */
+    public function getGoogleDocsFileInfos(string $mimeType)
+    {
+        $fileInfos = [];
+
+        switch($mimeType) {
+            case 'application/vnd.google-apps.document':
+                // MS Word document
+                $fileInfos['mimeType'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                $fileInfos['extension'] = '.docx';
+                break;
+            case 'application/vnd.google-apps.spreadsheet':
+                // MS Excel
+                $fileInfos['mimeType'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                $fileInfos['extension'] = '.xlsx';
+                break;
+            case 'application/vnd.google-apps.presentation':
+                // MS PowerPoint
+                $fileInfos['mimeType'] = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+                $fileInfos['extension'] = '.pptx';
+                break;
+            case 'application/vnd.google-apps.drawing':
+                $fileInfos['mimeType'] = 'image/png';
+                $fileInfos['extension'] = '.png';
+                break;
+        }
+
+        return $fileInfos;
+    }
+
+    /**
      * @return ??
      **/
     public function uploadFile(UploadedFile $file, $parentId = null): DriveServiceResponse
