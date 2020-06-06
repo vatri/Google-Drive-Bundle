@@ -8,7 +8,9 @@ Google Drive API Bundle for Symfony 4
 - Manage Google Drive files and folders
   - Create a folder (recursively)
   - Check if a folder exists
+  - Find a file by ID
   - Delete a file
+  - Download file
   - List files
   - Copy a file to specific directory
   - Upload a file
