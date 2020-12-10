@@ -256,8 +256,6 @@ class DriveApiService
      */
     public function listFiles(?string $parentId = '', ?bool $includeTrashed = true, ?bool $onlyStarred = false, string $orderBy = 'folder,name', array $extra = []): ?\Google_Service_Drive_FileList
     {
-        $drive = $this->getDrive();
-
         $filters = []; // List of queries for $q variable
 
         if($includeTrashed == false) {
@@ -271,7 +269,7 @@ class DriveApiService
         }
         $q = implode(" and ", $filters);
 
-        $res = $drive->files->listFiles(array_merge([
+        $res = $this->getDrive()->files->listFiles(array_merge([
             'q' => $q,
             'fields' => "files/*",
             'supportsAllDrives' => true,
@@ -314,13 +312,13 @@ class DriveApiService
      * @param string $name Name to search for
      * @param string $parentId
      */
-    public function find(string $name, string $parentId = ''): ?Google_Service_Drive_FileList
+    public function find(string $name, string $parentId = ''): ?\Google_Service_Drive_FileList
     {
         $q = "name = '$name'";
         if ($parentId != '') {
             $q .= " and parents in '$parentId' ";
         }
-        $res = $this->generateDrive()->files->listFiles([
+        $res = $this->getDrive()->files->listFiles([
             'q' => $q,
             'supportsAllDrives' => true
         ]);
