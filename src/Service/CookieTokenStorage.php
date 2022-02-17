@@ -35,7 +35,7 @@ class CookieTokenStorage implements TokenStorageInterface
         $cookie = new Cookie($this->access_token_key, $token, 0, '/');
         $response = new Response();
         $response->headers->setCookie($cookie);
-        $response->send();
+        $response->sendHeaders();
 	}
 
 	public function getToken() : ?array
