@@ -3,6 +3,7 @@
 namespace Vatri\GoogleDriveBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -27,10 +28,12 @@ class VatriGoogleDriveAuthController extends AbstractController
      */
     private $driveApiService;
 
-	public function __construct(ParameterBagInterface $parameterBag, SessionInterface $session, DriveApiService $driveApiService)
+	public function __construct(ParameterBagInterface $parameterBag, RequestStack $requestSatck, DriveApiService $driveApiService)
     {
+		try {
+            $this->session = $requestStack->getSession();
+        } catch (\Exception $exception){}
 		$this->parameterBag      = $parameterBag;
-		$this->session           = $session;
         $this->driveApiService = $driveApiService;
 	}
     /**

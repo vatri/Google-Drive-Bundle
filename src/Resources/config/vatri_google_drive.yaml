@@ -26,5 +26,5 @@ services:
     autoconfigure: true
     arguments:
       $parameterBag: '@parameter_bag'
-      $session: '@request_stack'
+      $requestStack: '@request_stack'
       $driveApiService: '@vatri_google_drive.api_service'
