@@ -6,6 +6,7 @@ use Google_Service_Drive_DriveFile;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Vatri\GoogleDriveBundle\DriveServiceResponse;
 
 
@@ -33,9 +34,11 @@ class DriveApiService
     private $token_storage;
 
 
-    public function __construct(SessionInterface $session, ParameterBagInterface $parameters, TokenStorageInterface $tokenStorage)
+    public function __construct(RequestStack $requestStack, ParameterBagInterface $parameters, TokenStorageInterface $tokenStorage)
     {
-        $this->session = $session;
+        try {
+            $this->session = $requestStack->getSession();
+        } catch (\Exception $exception) {}
         $this->parameters = $parameters;
         $this->token_storage = $tokenStorage;
     }
