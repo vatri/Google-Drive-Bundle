@@ -28,7 +28,7 @@ class VatriGoogleDriveAuthController extends AbstractController
      */
     private $driveApiService;
 
-	public function __construct(ParameterBagInterface $parameterBag, RequestStack $requestSatck, DriveApiService $driveApiService)
+	public function __construct(ParameterBagInterface $parameterBag, RequestStack $requestStack, DriveApiService $driveApiService)
     {
 		try {
             $this->session = $requestStack->getSession();
