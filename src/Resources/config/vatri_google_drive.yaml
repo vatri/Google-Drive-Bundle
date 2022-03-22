@@ -15,7 +15,7 @@ services:
 
   vatri_google_drive.api_service:
     class: Vatri\GoogleDriveBundle\Service\DriveApiService
-    arguments: [ '@session', '@parameter_bag', '@vatri_google_drive.cookie_token_storage' ]
+    arguments: [ '@request_stack', '@parameter_bag', '@vatri_google_drive.cookie_token_storage' ]
 
   # Alias:
   Vatri\GoogleDriveBundle\Service\DriveApiService: '@vatri_google_drive.api_service'
@@ -26,5 +26,5 @@ services:
     autoconfigure: true
     arguments:
       $parameterBag: '@parameter_bag'
-      $session: '@session'
+      $requestStack: '@request_stack'
       $driveApiService: '@vatri_google_drive.api_service'
