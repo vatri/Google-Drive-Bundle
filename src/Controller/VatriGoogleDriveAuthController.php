@@ -36,9 +36,11 @@ class VatriGoogleDriveAuthController extends AbstractController
 		$this->parameterBag      = $parameterBag;
         $this->driveApiService = $driveApiService;
 	}
-    /**
-     * @Route("/vatri_google_drive/auth", name="vatri_google_drive_auth")
+
+	/**
+     * @Route("/vatri_google_drive/auth", name="")
      */
+	#[Route(path: '/vatri_google_drive/auth', name: 'vatri_google_drive_auth')]
     public function index()
     {
 		

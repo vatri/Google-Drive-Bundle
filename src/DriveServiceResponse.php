@@ -36,7 +36,7 @@ class DriveServiceResponse
     /**
      * @return string
      */
-    public function getResourceId()
+    public function getResourceId():string
     {
         return $this->resource_id;
     }
@@ -44,7 +44,7 @@ class DriveServiceResponse
     /**
      * @param string $resource_id
      */
-    public function setResourceId($resource_id)
+    public function setResourceId($resource_id):void
     {
         $this->resource_id = $resource_id;
     }
@@ -52,7 +52,7 @@ class DriveServiceResponse
     /**
      * @return string
      */
-    public function getError()
+    public function getError():string
     {
         return $this->error;
     }
@@ -60,7 +60,7 @@ class DriveServiceResponse
     /**
      * @param string $error
      */
-    public function setError($error)
+    public function setError($error):void
     {
         $this->error = $error;
     }

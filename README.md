@@ -1,6 +1,6 @@
 # Google-Drive-Bundle
 
-Google Drive API Bundle for Symfony 4 and 5.
+Google Drive API Bundle for Symfony 6 and 7.
 
 # Features
 
